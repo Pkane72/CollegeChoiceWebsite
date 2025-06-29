@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/> <!-- Sets character encoding to UTF-8 -->
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/> <!-- Ensures responsiveness on different screen sizes -->
+<title>Interactive University Questions</title> <!-- Page title displayed in the browser tab -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- FontAwesome for Icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet"/>
+<style>
+        /* Basic styling for the body */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Heading styling */
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+.subheading {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+        /* Container for buttons */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        /* Styling for each button */
+        .button-item {
+            position: relative;
+            background: white;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        /* Hover effect for buttons */
+        .button-item:hover {
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-8px);
+        }
+
+        /* Icon inside buttons */
+        .button-item i {
+            font-size: 80px;
+            color: #007BFF;
+            margin-bottom: 15px;
+        }
+
+        /* Button text */
+        .button-item p {
+            font-size: 22px;
+            color: #333;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        /* Styling for a selected button */
+        .selected {
+            background: #28a745 !important;
+            color: white;
+        }
+
+        /* Adds a sequential number to each button */
+        .button-item::before {
+            content: attr(data-number);
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            background: #007BFF;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 50%;
+        }
+
+        /* Styling for selection modal (hidden initially) */
+        .selection-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Container inside modal */
+        .modal-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            width: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+/* Make ONLY the fourth button's modal larger */
+#tuitionModal .modal-container {
+    width: 90%;
+    max-width: 1100px;
+    height: auto;
+    max-height: 95vh;
+    overflow-y: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+}
+
+/* Ensure only the tuition chart resizes properly */
+#tuitionChart {
+    width: 100% !important;
+    height: 500px !important;
+    max-width: 1000px;
+}
+
+
+        /* Close button for modal */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        /* List inside modal */
+        .selection-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Each list item */
+        .selection-list li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        /* Hover effect for list items */
+        .selection-list li:hover {
+            background: #007BFF;
+            color: white;
+        }
+
+        /* Selected major styling */
+        .selected-major {
+            background: #007BFF;
+            color: white;
+        }
+
+        /* Image styling at the bottom */
+        .image-container {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<!-- Homepage Section -->
+<div id="homepage" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 10px; background: linear-gradient(to right, #e0f7fa, #ffffff); padding: 40px 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+<h1 style="font-size: 48px; color: #2c3e50; margin-bottom: 20px;">Welcome</h1>
+<div class="image-container" style="margin-top: 40px;">
+</div>
+<div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 40px; max-width: 1200px; padding: 20px 0;"><div style="flex: 1; min-width: 300px; text-align: center;"><img alt="Students Thinking" src="A_black-and-white_digital_illustration_depicts_thr.png" style="max-width: 100%; height: auto;"/></div><div style="flex: 1; min-width: 300px; text-align: left; display: flex; flex-direction: column; justify-content: center;"><p style="max-width: 600px; font-size: 18px; color: #555; line-height: 1.6; text-align: left;">
+        When I was 17 and applying to colleges, I didn’t fully grasp what it meant to take out tens of thousands of dollars in student loans. I figured that if I landed a job paying $70,000 and owed $40,000, I’d pay it off in a year or two. Needless to say, I was way off.
+        <br/><br/>
+        I know I’m not alone in this. That’s why I built this tool — to help prospective students better understand what their monthly income might look like after graduation, and how much of it could go toward repaying student loans. I hope it’s helpful.
+    </p><button onclick="beginApp()" style="margin-top: 30px; align-self: center; padding: 15px 30px; font-size: 18px; background-color: #007BFF; color: white; border: none; border-radius: 10px; cursor: pointer;">
+        Let’s Begin
+    </button></div></div></div>
+<div id="mainApp" style="display: none;">
+<h1>Understand Your Future Finances</h1> <!-- Main heading -->
+<p class="subheading">Visualize your post-graduation finances based on school selections, major selections, and in-state vs out-of-state tuition.</p>
+<!-- Buttons section -->
+<div class="button-container">
+<div class="button-item" data-number="1" id="stateButton" onclick="openStateModal()">
+<i class="fas fa-map-marker-alt"></i>
+<p id="selectedStateText">Where are you from?</p>
+</div>
+<div class="button-item" data-number="2" id="majorButton" onclick="openMajorModal()">
+<i class="fas fa-book"></i>
+<p id="selectedMajorText">What are you interested in studying?</p>
+</div>
+<div class="button-item" data-number="3" id="universityButton" onclick="openUniversityModal()">
+<i class="fas fa-university"></i>
+<p id="selectedUniversityText">Which universities are you interested in?</p>
+</div>
+<div class="button-item" data-number="4" id="financeButton" onclick="showFinances()">
+<i class="fas fa-money-bill-wave"></i>
+<p>Compare Tuition Costs</p>
+</div>
+</div>
+<!-- State Selection Modal -->
+<div class="selection-modal" id="stateModal">
+<div class="modal-container">
+<button class="close-btn" onclick="closeStateModal()">X</button>
+<h2>Select Your State</h2>
+<ul class="selection-list">
+<li onclick="selectState('Alabama')">Alabama (AL)</li>
+<li onclick="selectState('Alaska')">Alaska (AK)</li>
+<li onclick="selectState('Arizona')">Arizona (AZ)</li>
+<li onclick="selectState('Arkansas')">Arkansas (AR)</li>
+<li onclick="selectState('California')">California (CA)</li>
+<li onclick="selectState('Colorado')">Colorado (CO)</li>
+<li onclick="selectState('Connecticut')">Connecticut (CT)</li>
+<li onclick="selectState('Delaware')">Delaware (DE)</li>
+<li onclick="selectState('Florida')">Florida (FL)</li>
+<li onclick="selectState('Georgia')">Georgia (GA)</li>
+<li onclick="selectState('Hawaii')">Hawaii (HI)</li>
+<li onclick="selectState('Idaho')">Idaho (ID)</li>
+<li onclick="selectState('Illinois')">Illinois (IL)</li>
+<li onclick="selectState('Indiana')">Indiana (IN)</li>
+<li onclick="selectState('Iowa')">Iowa (IA)</li>
+<li onclick="selectState('Kansas')">Kansas (KS)</li>
+<li onclick="selectState('Kentucky')">Kentucky (KY)</li>
+<li onclick="selectState('Louisiana')">Louisiana (LA)</li>
+<li onclick="selectState('Maine')">Maine (ME)</li>
+<li onclick="selectState('Maryland')">Maryland (MD)</li>
+<li onclick="selectState('Massachusetts')">Massachusetts (MA)</li>
+<li onclick="selectState('Michigan')">Michigan (MI)</li>
+<li onclick="selectState('Minnesota')">Minnesota (MN)</li>
+<li onclick="selectState('Mississippi')">Mississippi (MS)</li>
+<li onclick="selectState('Missouri')">Missouri (MO)</li>
+<li onclick="selectState('Montana')">Montana (MT)</li>
+<li onclick="selectState('Nebraska')">Nebraska (NE)</li>
+<li onclick="selectState('Nevada')">Nevada (NV)</li>
+<li onclick="selectState('New Hampshire')">New Hampshire (NH)</li>
+<li onclick="selectState('New Jersey')">New Jersey (NJ)</li>
+<li onclick="selectState('New Mexico')">New Mexico (NM)</li>
+<li onclick="selectState('New York')">New York (NY)</li>
+<li onclick="selectState('North Carolina')">North Carolina (NC)</li>
+<li onclick="selectState('North Dakota')">North Dakota (ND)</li>
+<li onclick="selectState('Ohio')">Ohio (OH)</li>
+<li onclick="selectState('Oklahoma')">Oklahoma (OK)</li>
+<li onclick="selectState('Oregon')">Oregon (OR)</li>
+<li onclick="selectState('Pennsylvania')">Pennsylvania (PA)</li>
+<li onclick="selectState('Rhode Island')">Rhode Island (RI)</li>
+<li onclick="selectState('South Carolina')">South Carolina (SC)</li>
+<li onclick="selectState('South Dakota')">South Dakota (SD)</li>
+<li onclick="selectState('Tennessee')">Tennessee (TN)</li>
+<li onclick="selectState('Texas')">Texas (TX)</li>
+<li onclick="selectState('Utah')">Utah (UT)</li>
+<li onclick="selectState('Vermont')">Vermont (VT)</li>
+<li onclick="selectState('Virginia')">Virginia (VA)</li>
+<li onclick="selectState('Washington')">Washington (WA)</li>
+<li onclick="selectState('West Virginia')">West Virginia (WV)</li>
+<li onclick="selectState('Wisconsin')">Wisconsin (WI)</li>
+<li onclick="selectState('Wyoming')">Wyoming (WY)</li>
+</ul>
+</div>
+</div>
+<!-- Major Selection Modal -->
+<div class="selection-modal" id="majorModal">
+<div class="modal-container">
+<button class="close-btn" onclick="closeMajorModal()">X</button>
+<h2>Select Up to 3 Majors</h2>
+<ul class="selection-list">
+<li onclick="selectMajor(this, 'Accounting')">Accounting</li>
+<li onclick="selectMajor(this, 'Anthropology')">Anthropology</li>
+<li onclick="selectMajor(this, 'Architecture')">Architecture</li>
+<li onclick="selectMajor(this, 'Art')">Art</li>
+<li onclick="selectMajor(this, 'Astronomy')">Astronomy</li>
+<li onclick="selectMajor(this, 'Biology')">Biology</li>
+<li onclick="selectMajor(this, 'Biomedical Engineering')">Biomedical Engineering</li>
+<li onclick="selectMajor(this, 'Business Administration')">Business Administration</li>
+<li onclick="selectMajor(this, 'Chemical Engineering')">Chemical Engineering</li>
+<li onclick="selectMajor(this, 'Civil Engineering')">Civil Engineering</li>
+<li onclick="selectMajor(this, 'Cognitive Science')">Cognitive Science</li>
+<li onclick="selectMajor(this, 'Communications')">Communications</li>
+<li onclick="selectMajor(this, 'Computer Engineering')">Computer Engineering</li>
+<li onclick="selectMajor(this, 'Computer Science')">Computer Science</li>
+<li onclick="selectMajor(this, 'Criminal Justice')">Criminal Justice</li>
+<li onclick="selectMajor(this, 'Economics')">Economics</li>
+<li onclick="selectMajor(this, 'Education')">Education</li>
+<li onclick="selectMajor(this, 'Electrical Engineering')">Electrical Engineering</li>
+<li onclick="selectMajor(this, 'English')">English</li>
+<li onclick="selectMajor(this, 'Environmental Science')">Environmental Science</li>
+<li onclick="selectMajor(this, 'Finance')">Finance</li>
+<li onclick="selectMajor(this, 'Forestry')">Forestry</li>
+<li onclick="selectMajor(this, 'Geology')">Geology</li>
+<li onclick="selectMajor(this, 'Graphic Design')">Graphic Design</li>
+<li onclick="selectMajor(this, 'Health Sciences')">Health Sciences</li>
+<li onclick="selectMajor(this, 'Hospitality Management')">Hospitality Management</li>
+<li onclick="selectMajor(this, 'Industrial Engineering')">Industrial Engineering</li>
+<li onclick="selectMajor(this, 'International Relations')">International Relations</li>
+<li onclick="selectMajor(this, 'Journalism')">Journalism</li>
+<li onclick="selectMajor(this, 'Linguistics')">Linguistics</li>
+<li onclick="selectMajor(this, 'Marketing')">Marketing</li>
+<li onclick="selectMajor(this, 'Mathematics')">Mathematics</li>
+<li onclick="selectMajor(this, 'Mechanical Engineering')">Mechanical Engineering</li>
+<li onclick="selectMajor(this, 'Music')">Music</li>
+<li onclick="selectMajor(this, 'Nursing')">Nursing</li>
+<li onclick="selectMajor(this, 'Nutrition')">Nutrition</li>
+<li onclick="selectMajor(this, 'Pharmacy')">Pharmacy</li>
+<li onclick="selectMajor(this, 'Philosophy')">Philosophy</li>
+<li onclick="selectMajor(this, 'Physics')">Physics</li>
+<li onclick="selectMajor(this, 'Political Science')">Political Science</li>
+<li onclick="selectMajor(this, 'Psychology')">Psychology</li>
+<li onclick="selectMajor(this, 'Public Health')">Public Health</li>
+<li onclick="selectMajor(this, 'Religious Studies')">Religious Studies</li>
+<li onclick="selectMajor(this, 'Social Work')">Social Work</li>
+<li onclick="selectMajor(this, 'Sociology')">Sociology</li>
+<li onclick="selectMajor(this, 'Sports Management')">Sports Management</li>
+<li onclick="selectMajor(this, 'Theater')">Theater</li>
+<li onclick="selectMajor(this, 'Urban Planning')">Urban Planning</li>
+<li onclick="selectMajor(this, 'Veterinary Science')">Veterinary Science</li>
+</ul>
+<button class="close-btn" onclick="closeMajorModal()">Done</button>
+</div>
+</div>
+<!-- University Selection Modal -->
+<div class="selection-modal" id="universityModal">
+<div class="modal-container">
+<button class="close-btn" onclick="closeUniversityModal()">X</button>
+<h2>Select Up to 3 Universities</h2>
+<ul class="selection-list">
+<li onclick="selectUniversity(this, 'University of Alabama')">University of Alabama</li>
+<li onclick="selectUniversity(this, 'University of Alaska Fairbanks')">University of Alaska Fairbanks</li>
+<li onclick="selectUniversity(this, 'Arizona State University')">Arizona State University</li>
+<li onclick="selectUniversity(this, 'University of Arkansas')">University of Arkansas</li>
+<li onclick="selectUniversity(this, 'University of California, Berkeley')">University of California, Berkeley</li>
+<li onclick="selectUniversity(this, 'University of Colorado Boulder')">University of Colorado Boulder</li>
+<li onclick="selectUniversity(this, 'University of Connecticut')">University of Connecticut</li>
+<li onclick="selectUniversity(this, 'University of Delaware')">University of Delaware</li>
+<li onclick="selectUniversity(this, 'University of Florida')">University of Florida</li>
+<li onclick="selectUniversity(this, 'University of Georgia')">University of Georgia</li>
+<li onclick="selectUniversity(this, 'University of Hawaii at Manoa')">University of Hawaii at Manoa</li>
+<li onclick="selectUniversity(this, 'University of Idaho')">University of Idaho</li>
+<li onclick="selectUniversity(this, 'University of Illinois at Urbana-Champaign')">University of Illinois at Urbana-Champaign</li>
+<li onclick="selectUniversity(this, 'Indiana University Bloomington')">Indiana University Bloomington</li>
+<li onclick="selectUniversity(this, 'University of Iowa')">University of Iowa</li>
+<li onclick="selectUniversity(this, 'University of Kansas')">University of Kansas</li>
+<li onclick="selectUniversity(this, 'University of Kentucky')">University of Kentucky</li>
+<li onclick="selectUniversity(this, 'Louisiana State University')">Louisiana State University</li>
+<li onclick="selectUniversity(this, 'University of Maine')">University of Maine</li>
+<li onclick="selectUniversity(this, 'University of Maryland, College Park')">University of Maryland, College Park</li>
+<li onclick="selectUniversity(this, 'University of Massachusetts Amherst')">University of Massachusetts Amherst</li>
+<li onclick="selectUniversity(this, 'University of Michigan')">University of Michigan</li>
+<li onclick="selectUniversity(this, 'University of Minnesota Twin Cities')">University of Minnesota Twin Cities</li>
+<li onclick="selectUniversity(this, 'University of Mississippi')">University of Mississippi</li>
+<li onclick="selectUniversity(this, 'University of Missouri')">University of Missouri</li>
+<li onclick="selectUniversity(this, 'University of Montana')">University of Montana</li>
+<li onclick="selectUniversity(this, 'University of Nebraska-Lincoln')">University of Nebraska-Lincoln</li>
+<li onclick="selectUniversity(this, 'University of Nevada, Reno')">University of Nevada, Reno</li>
+<li onclick="selectUniversity(this, 'University of New Hampshire')">University of New Hampshire</li>
+<li onclick="selectUniversity(this, 'Rutgers University')">Rutgers University</li>
+<li onclick="selectUniversity(this, 'University of New Mexico')">University of New Mexico</li>
+<li onclick="selectUniversity(this, 'University at Buffalo')">University at Buffalo</li>
+<li onclick="selectUniversity(this, 'University of North Carolina at Chapel Hill')">University of North Carolina at Chapel Hill</li>
+<li onclick="selectUniversity(this, 'University of North Dakota')">University of North Dakota</li>
+<li onclick="selectUniversity(this, 'Ohio State University')">Ohio State University</li>
+<li onclick="selectUniversity(this, 'University of Oklahoma')">University of Oklahoma</li>
+<li onclick="selectUniversity(this, 'University of Oregon')">University of Oregon</li>
+<li onclick="selectUniversity(this, 'Pennsylvania State University')">Pennsylvania State University</li>
+<li onclick="selectUniversity(this, 'University of Rhode Island')">University of Rhode Island</li>
+<li onclick="selectUniversity(this, 'University of South Carolina')">University of South Carolina</li>
+<li onclick="selectUniversity(this, 'University of South Dakota')">University of South Dakota</li>
+<li onclick="selectUniversity(this, 'University of Tennessee')">University of Tennessee</li>
+<li onclick="selectUniversity(this, 'University of Texas at Austin')">University of Texas at Austin</li>
+<li onclick="selectUniversity(this, 'University of Utah')">University of Utah</li>
+<li onclick="selectUniversity(this, 'University of Vermont')">University of Vermont</li>
+</ul>
+<button class="close-btn" onclick="closeUniversityModal()">Done</button>
+</div>
+</div>
+<!-- Tuition Graph Model -->
+<!-- Tuition Comparison Modal -->
+<div class="selection-modal" id="tuitionModal">
+<div class="modal-container">
+<button class="close-btn" onclick="closeTuitionModal()">X</button>
+<h2>Expense Comparison</h2>
+<!-- Sliders for User-Adjustable Expenses -->
+<div style="text-align: center; margin-bottom: 30px;">
+<div style="display: inline-block; width: 30%; vertical-align: top;">
+<label for="rentSlider" style="font-weight: bold; display: block;">Rent:</label>
+<div style="margin-bottom: 10px;">$<span id="rentValue">1500</span></div>
+<input id="rentSlider" max="4000" min="500" oninput="updateExpenses()" step="50" style="width: 80%;" type="range" value="1500"/>
+</div>
+<div style="display: inline-block; width: 30%; vertical-align: top;">
+<label for="carSlider" style="font-weight: bold; display: block;">Car Payment:</label>
+<div style="margin-bottom: 10px;">$<span id="carValue">300</span></div>
+<input id="carSlider" max="2000" min="0" oninput="updateExpenses()" step="50" style="width: 80%;" type="range" value="300"/>
+</div>
+<div style="display: inline-block; width: 30%; vertical-align: top;">
+<label for="grocerySlider" style="font-weight: bold; display: block;">Groceries:</label>
+<div style="margin-bottom: 10px;">$<span id="groceryValue">400</span></div>
+<input id="grocerySlider" max="2000" min="100" oninput="updateExpenses()" step="50" style="width: 80%;" type="range" value="400"/>
+</div>
+</div>
+<canvas id="tuitionChart"></canvas>
+</div>
+</div>
+<!-- Image at the bottom -->
+<script>
+
+function beginApp() {
+    document.getElementById("homepage").style.display = "none";
+    document.getElementById("mainApp").style.display = "block";
+}
+
+        let selectedMajors = []; // Array to store selected majors
+
+        function openStateModal() {
+            document.getElementById("stateModal").style.display = "flex"; // Show state modal
+        }
+
+        function closeStateModal() {
+            document.getElementById("stateModal").style.display = "none"; // Hide state modal
+        }
+
+function selectState(state) {
+    userState = state; // Save user state selection
+    document.getElementById("selectedStateText").innerText = state;
+    document.getElementById("stateButton").classList.add("selected");
+    closeStateModal();
+}
+
+        function openMajorModal() {
+            document.getElementById("majorModal").style.display = "flex"; // Show major modal
+        }
+
+        function closeMajorModal() {
+            document.getElementById("majorModal").style.display = "none"; // Hide major modal
+        }
+
+        function selectMajor(element, major) {
+            if (selectedMajors.includes(major)) {
+                selectedMajors = selectedMajors.filter(m => m !== major);
+                element.classList.remove("selected-major");
+            } else {
+                if (selectedMajors.length >= 3) {
+                    alert("You can only select up to 3 majors.");
+                    return;
+                }
+                selectedMajors.push(major);
+                element.classList.add("selected-major");
+            }
+
+            document.getElementById("selectedMajorText").innerText = selectedMajors.join(", ") || "What are you interested in studying?";
+	    document.getElementById("majorButton").classList.toggle("selected", selectedMajors.length > 0);
+        }
+
+let selectedUniversities = []; // Array to store selected universities
+
+function openUniversityModal() {
+    document.getElementById("universityModal").style.display = "flex"; // Show university modal
+}
+
+function closeUniversityModal() {
+    document.getElementById("universityModal").style.display = "none"; // Hide university modal
+}
+
+function selectUniversity(element, university) {
+    if (selectedUniversities.includes(university)) {
+        selectedUniversities = selectedUniversities.filter(u => u !== university);
+        element.classList.remove("selected-major");
+    } else {
+        if (selectedUniversities.length >= 3) {
+            alert("You can only select up to 3 universities.");
+            return;
+        }
+        selectedUniversities.push(university);
+        element.classList.add("selected-major");
+    }
+
+    // Update button text
+    document.getElementById("selectedUniversityText").innerText = selectedUniversities.join(", ") || "Which universities are you interested in?";
+
+    // Toggle green background when at least one university is selected
+    document.getElementById("universityButton").classList.toggle("selected", selectedUniversities.length > 0);
+}
+
+// Median first-year salaries for selected majors
+const medianSalaries = {
+    "Accounting": 55000 / 12, // Monthly salary
+    "Anthropology": 40000 / 12, // Monthly salary
+    "Architecture": 60000 / 12, // Monthly salary
+    "Art": 42000 / 12, // Monthly salary
+    "Astronomy": 70000 / 12, // Monthly salary
+    "Biology": 50000 / 12, // Monthly salary
+    "Biomedical Engineering": 70000 / 12, // Monthly salary
+    "Business Administration": 55000 / 12, // Monthly salary
+    "Chemical Engineering": 75000 / 12, // Monthly salary
+    "Civil Engineering": 65000 / 12, // Monthly salary
+    "Cognitive Science": 65000 / 12, // Monthly salary
+    "Communications": 48000 / 12, // Monthly salary
+    "Computer Engineering": 80000 / 12, // Monthly salary
+    "Computer Science": 80000 / 12, // Monthly salary
+    "Criminal Justice": 45000 / 12, // Monthly salary
+    "Economics": 65000 / 12, // Monthly salary
+    "Education": 42000 / 12, // Monthly salary
+    "Electrical Engineering": 75000 / 12, // Monthly salary
+    "English": 42000 / 12, // Monthly salary
+    "Environmental Science": 50000 / 12, // Monthly salary
+    "Finance": 60000 / 12, // Monthly salary
+    "Forestry": 48000 / 12, // Monthly salary
+    "Geology": 55000 / 12, // Monthly salary
+    "Graphic Design": 45000 / 12, // Monthly salary
+    "Health Sciences": 50000 / 12, // Monthly salary
+    "Hospitality Management": 45000 / 12, // Monthly salary
+    "Industrial Engineering": 70000 / 12, // Monthly salary
+    "International Relations": 50000 / 12, // Monthly salary
+    "Journalism": 45000 / 12, // Monthly salary
+    "Linguistics": 45000 / 12, // Monthly salary
+    "Marketing": 52000 / 12, // Monthly salary
+    "Mathematics": 65000 / 12, // Monthly salary
+    "Mechanical Engineering": 75000 / 12, // Monthly salary
+    "Music": 42000 / 12, // Monthly salary
+    "Nursing": 65000 / 12, // Monthly salary
+    "Nutrition": 45000 / 12, // Monthly salary
+    "Pharmacy": 80000 / 12, // Monthly salary
+    "Philosophy": 45000 / 12, // Monthly salary
+    "Physics": 65000 / 12, // Monthly salary
+    "Political Science": 50000 / 12, // Monthly salary
+    "Psychology": 45000 / 12, // Monthly salary
+    "Public Health": 50000 / 12, // Monthly salary
+    "Religious Studies": 42000 / 12, // Monthly salary
+    "Social Work": 45000 / 12, // Monthly salary
+    "Sociology": 45000 / 12, // Monthly salary
+    "Sports Management": 46000 / 12, // Monthly salary
+    "Theater": 40000 / 12, // Monthly salary
+    "Urban Planning": 60000 / 12, // Monthly salary
+    "Veterinary Science": 70000 / 12  // Monthly salary
+};
+
+
+// Tuition data for universities (yearly tuition costs in USD)
+const tuitionData = {
+    "University of Alabama": { inState: 11270, outState: 31250 },
+    "University of Alaska Fairbanks": { inState: 9300, outState: 27900 },
+    "Arizona State University": { inState: 11650, outState: 29700 },
+    "University of Arkansas": { inState: 9500, outState: 26500 },
+    "University of California, Berkeley": { inState: 14400, outState: 44400 },
+    "University of Colorado Boulder": { inState: 12800, outState: 38000 },
+    "University of Connecticut": { inState: 15730, outState: 38600 },
+    "University of Delaware": { inState: 13700, outState: 34600 },
+    "University of Florida": { inState: 6400, outState: 28600 },
+    "University of Georgia": { inState: 12080, outState: 31320 },
+    "University of Hawaii at Manoa": { inState: 11700, outState: 33900 },
+    "University of Idaho": { inState: 8200, outState: 27000 },
+    "University of Illinois at Urbana-Champaign": { inState: 17000, outState: 36000 },
+    "Indiana University Bloomington": { inState: 11000, outState: 38000 },
+    "University of Iowa": { inState: 9500, outState: 31000 },
+    "University of Kansas": { inState: 11000, outState: 28000 },
+    "University of Kentucky": { inState: 12700, outState: 31000 },
+    "Louisiana State University": { inState: 11200, outState: 28700 },
+    "University of Maine": { inState: 11800, outState: 32800 },
+    "University of Maryland, College Park": { inState: 10500, outState: 35800 },
+    "University of Massachusetts Amherst": { inState: 16200, outState: 36400 },
+    "University of Michigan": { inState: 17230, outState: 54000 },
+    "University of Minnesota Twin Cities": { inState: 15000, outState: 33000 },
+    "University of Mississippi": { inState: 8900, outState: 25000 },
+    "University of Missouri": { inState: 11000, outState: 29000 },
+    "University of Montana": { inState: 7400, outState: 26600 },
+    "University of Nebraska-Lincoln": { inState: 9600, outState: 25600 },
+    "University of Nevada, Reno": { inState: 8000, outState: 24000 },
+    "University of New Hampshire": { inState: 18700, outState: 33700 },
+    "Rutgers University": { inState: 15500, outState: 32000 },
+    "University of New Mexico": { inState: 7800, outState: 23400 },
+    "University at Buffalo": { inState: 10400, outState: 28200 },
+    "University of North Carolina at Chapel Hill": { inState: 9000, outState: 36000 },
+    "University of North Dakota": { inState: 10000, outState: 20000 },
+    "Ohio State University": { inState: 11200, outState: 32800 },
+    "University of Oklahoma": { inState: 11700, outState: 27500 },
+    "University of Oregon": { inState: 13000, outState: 38000 },
+    "Pennsylvania State University": { inState: 18500, outState: 35000 },
+    "University of Rhode Island": { inState: 14000, outState: 31000 },
+    "University of South Carolina": { inState: 12500, outState: 33500 },
+    "University of South Dakota": { inState: 9300, outState: 12400 },
+    "University of Tennessee": { inState: 13700, outState: 31000 },
+    "University of Texas at Austin": { inState: 11000, outState: 40000 },
+    "University of Utah": { inState: 9300, outState: 30000 },
+    "University of Vermont": { inState: 18000, outState: 43000 }
+};
+
+let userState = ""; // Stores the user's selected state
+
+// Function to set the user's selected state
+function selectState(state) {
+    userState = state; // Save user state selection
+    document.getElementById("selectedStateText").innerText = state;
+    document.getElementById("stateButton").classList.add("selected");
+    closeStateModal();
+}
+
+// Function to update expenses when sliders are adjusted
+function updateExpenses() {
+    let rent = parseInt(document.getElementById("rentSlider").value);
+    let carPayment = parseInt(document.getElementById("carSlider").value);
+    let groceries = parseInt(document.getElementById("grocerySlider").value);
+
+    document.getElementById("rentValue").innerText = rent;
+    document.getElementById("carValue").innerText = carPayment;
+    document.getElementById("groceryValue").innerText = groceries;
+
+    // Redraw chart with updated values
+    showFinances(rent, carPayment, groceries);
+}
+
+// Map universities to their actual states
+const universityLocations = {
+    "University of Alabama": "Alabama",
+    "University of Alaska Fairbanks": "Alaska",
+    "Arizona State University": "Arizona",
+    "University of Arkansas": "Arkansas",
+    "University of California, Berkeley": "California",
+    "University of Colorado Boulder": "Colorado",
+    "University of Connecticut": "Connecticut",
+    "University of Delaware": "Delaware",
+    "University of Florida": "Florida",
+    "University of Georgia": "Georgia",
+    "University of Hawaii at Manoa": "Hawaii",
+    "University of Idaho": "Idaho",
+    "University of Illinois at Urbana-Champaign": "Illinois",
+    "Indiana University Bloomington": "Indiana",
+    "University of Iowa": "Iowa",
+    "University of Kansas": "Kansas",
+    "University of Kentucky": "Kentucky",
+    "Louisiana State University": "Louisiana",
+    "University of Maine": "Maine",
+    "University of Maryland, College Park": "Maryland",
+    "University of Massachusetts Amherst": "Massachusetts",
+    "University of Michigan": "Michigan",
+    "University of Minnesota Twin Cities": "Minnesota",
+    "University of Mississippi": "Mississippi",
+    "University of Missouri": "Missouri",
+    "University of Montana": "Montana",
+    "University of Nebraska-Lincoln": "Nebraska",
+    "University of Nevada, Reno": "Nevada",
+    "University of New Hampshire": "New Hampshire",
+    "Rutgers University": "New Jersey",
+    "University of New Mexico": "New Mexico",
+    "University at Buffalo": "New York",
+    "University of North Carolina at Chapel Hill": "North Carolina",
+    "University of North Dakota": "North Dakota",
+    "Ohio State University": "Ohio",
+    "University of Oklahoma": "Oklahoma",
+    "University of Oregon": "Oregon",
+    "Pennsylvania State University": "Pennsylvania",
+    "University of Rhode Island": "Rhode Island",
+    "University of South Carolina": "South Carolina",
+    "University of South Dakota": "South Dakota",
+    "University of Tennessee": "Tennessee",
+    "University of Texas at Austin": "Texas",
+    "University of Utah": "Utah",
+    "University of Vermont": "Vermont"
+};
+
+// Function to determine if tuition should be in-state or out-of-state
+function isInStateTuition(userState, university) {
+    return universityLocations[university] === userState;
+}
+
+function showFinances(rent = 1500, carPayment = 300, groceries = 400) {
+    if (selectedUniversities.length === 0 || selectedMajors.length === 0 || !userState) {
+        alert("Please select your home state, at least one university, and one major first.");
+        return;
+    }
+
+    const interestRate = 0.06; // 6% annual interest
+    const loanTermMonths = 10 * 12; // 10 years in months
+    const monthlyRate = interestRate / 12; // Monthly interest rate
+
+    let labels = [];
+    let monthlyPayments = [];
+    let remainingIncome = [];
+    let rentCosts = [];
+    let carPayments = [];
+    let groceryCosts = [];
+
+    let backgroundColorsPayments = [];
+    let backgroundColorsSavings = [];
+    let backgroundColorsRent = [];
+    let backgroundColorsCar = [];
+    let backgroundColorsGroceries = [];
+
+    selectedUniversities.forEach(university => {
+        if (tuitionData[university]) {
+            let tuitionCost;
+
+            // Determine in-state or out-of-state tuition
+            if (isInStateTuition(userState, university)) {
+                tuitionCost = tuitionData[university].inState;
+            } else {
+                tuitionCost = tuitionData[university].outState;
+            }
+
+            // Calculate total loan amount (4 years of tuition)
+            let totalLoanAmount = tuitionCost * 4;
+
+            // Calculate Monthly Loan Payment using the loan formula
+            let monthlyPayment = (totalLoanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -loanTermMonths));
+            monthlyPayment = Math.round(monthlyPayment); // Round to nearest dollar
+
+            selectedMajors.forEach(major => {
+                if (medianSalaries[major]) {
+                    let monthlySalary = Math.round(medianSalaries[major]); // Round salary
+
+                    // Calculate remaining income after loan payments and expenses
+                    let remainingAfterExpenses = monthlySalary - (monthlyPayment + rent + carPayment + groceries);
+                    let savings = remainingAfterExpenses > 0 ? remainingAfterExpenses : 0; // Avoid negative savings
+
+                    // Add data to chart arrays
+                    labels.push(`${university}
+${major}`);
+                    monthlyPayments.push(monthlyPayment);
+                    remainingIncome.push(savings);
+                    rentCosts.push(rent);
+                    carPayments.push(carPayment);
+                    groceryCosts.push(groceries);
+
+                    // Assign colors
+                    backgroundColorsPayments.push("red"); // Loan payments in red
+                    backgroundColorsSavings.push("blue"); // Remaining income for savings in blue
+                    backgroundColorsRent.push("gray"); // Rent in gray
+                    backgroundColorsCar.push("orange"); // Car Payment in orange
+                    backgroundColorsGroceries.push("purple"); // Groceries in purple
+                }
+            });
+        }
+    });
+
+    console.log("Selected Universities:", selectedUniversities);
+    console.log("Selected Majors:", selectedMajors);
+    console.log("User's Home State:", userState);
+    console.log("Labels:", labels);
+    console.log("Monthly Payments (Loans):", monthlyPayments);
+    console.log("Remaining Income (Savings):", remainingIncome);
+    console.log("Rent Costs:", rentCosts);
+    console.log("Car Payments:", carPayments);
+    console.log("Grocery Costs:", groceryCosts);
+
+    if (labels.length === 0 || monthlyPayments.length === 0) {
+        console.error("Error: No valid tuition or salary data found.");
+        return;
+    }
+
+    // Show modal
+    document.getElementById("tuitionModal").style.display = "flex";
+
+    // Ensure Canvas Context is Valid
+    let canvas = document.getElementById("tuitionChart");
+    let ctx = canvas.getContext("2d");
+
+    // Clear previous chart if it exists
+    if (window.tuitionChart instanceof Chart) {
+        window.tuitionChart.destroy();
+    }
+
+    // Create a stacked bar chart for expense comparison
+    window.tuitionChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Monthly Loan Payment (USD)",
+                    data: monthlyPayments,
+                    backgroundColor: backgroundColorsPayments
+                },
+                {
+                    label: "Rent",
+                    data: rentCosts,
+                    backgroundColor: backgroundColorsRent
+                },
+                {
+                    label: "Car Payment",
+                    data: carPayments,
+                    backgroundColor: backgroundColorsCar
+                },
+                {
+                    label: "Groceries",
+                    data: groceryCosts,
+                    backgroundColor: backgroundColorsGroceries
+                },
+                {
+                    label: "Remaining Monthly Income (Savings)",
+                    data: remainingIncome,
+                    backgroundColor: backgroundColorsSavings
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    stacked: true,
+                    ticks: {
+                        callback: function(value) {
+                            return "$" + value; /* Format as currency */
+                        }
+                    }
+                },
+                x: {
+                    stacked: true,
+                    ticks: {
+                        autoSkip: false,
+                        maxRotation: 0,
+                        callback: function(value, index, values) {
+                            const label = this.getLabelForValue(value);
+                            return label.split("\n"); // Keep university on one line and major on another
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        boxWidth: 20,
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return "$" + tooltipItem.raw.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+
+
+
+
+// Function to close the tuition modal
+function closeTuitionModal() {
+    document.getElementById("tuitionModal").style.display = "none";
+}
+
+    </script>
+
+<div style="width: 100%; padding: 40px 20px; background: linear-gradient(to right, #007BFF, #00C9A7); color: white; text-align: center; margin-top: 60px;">
+    <h2 style="font-size: 28px; margin-bottom: 10px;">Explore Your Future</h2>
+    <p style="font-size: 18px; margin-bottom: 30px;">Get a better sense of what life looks like after college. Dive in and start planning today.</p>
+    <div style="font-size: 30px;">
+        <i class="fas fa-laptop-code" style="margin: 0 15px;"></i>
+        <i class="fas fa-graduation-cap" style="margin: 0 15px;"></i>
+        <i class="fas fa-chart-line" style="margin: 0 15px;"></i>
+        <i class="fas fa-hand-holding-usd" style="margin: 0 15px;"></i>
+    </div>
+</div>
+</div>
+</body>
+</html>
